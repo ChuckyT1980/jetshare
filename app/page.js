@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+const AFFILIATE_URL = 'https://villiers.ai/?id=PGKKD7';
 
 // ─── SVG Icons ──────────────────────────────────────────
 const PlaneIcon = () => (
@@ -81,6 +83,107 @@ function getCityImage(city) {
   return CITY_IMAGES[city] || CITY_IMAGES['default'];
 }
 
+// ─── Empty Legs Ticker ──────────────────────────────────
+function EmptyLegsTicker({ flights }) {
+
+  // Need at least a few items; duplicate until we have 12+ for seamless loop
+  if (!flights || flights.length === 0) return null;
+
+  const items = flights.length < 6
+    ? [...flights, ...flights, ...flights]
+    : [...flights, ...flights]; // duplicate for seamless infinite scroll
+
+  return (
+    <div className="ticker-strip ticker-strip-empty-legs">
+      <div className="ticker-label ticker-label-empty-legs">
+        <span className="ticker-label-dot" />
+        ✈ LIVE EMPTY LEGS
+      </div>
+      <div className="ticker-track-wrap">
+        <div className="ticker-track">
+          {items.map((flight, i) => (
+            <a
+              key={`el-${i}`}
+              href={AFFILIATE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ticker-item ticker-item-empty-legs"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <span className="ticker-item-route">
+                <span className="ticker-item-from">{flight.fromCity || flight.from}</span>
+                <span className="ticker-item-arrow">→</span>
+                <span className="ticker-item-to">{flight.toCity || flight.to}</span>
+              </span>
+              {flight.aircraft && (
+                <span style={{ opacity: 0.6, fontSize: '0.65rem' }}>· {flight.aircraft}</span>
+              )}
+              {flight.price ? (
+                <span className="ticker-item-price">
+                  · ${flight.price.toLocaleString()}
+                </span>
+              ) : (
+                <span className="ticker-item-price">· Request Quote</span>
+              )}
+              {flight.date && (
+                <span style={{ opacity: 0.55, fontSize: '0.65rem' }}>· {flight.date}</span>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Cancellations Ticker ────────────────────────────────
+function CancellationsTicker({ disruptions, cancellations }) {
+  const allItems = [
+    ...(disruptions || []).map(d => ({
+      key: `d-${d.airport}`,
+      label: `⚠ ${d.city || d.airport}`,
+      detail: `${d.status}${d.reason ? ` — ${d.reason}` : ''}`,
+      severity: d.severity,
+    })),
+    ...(cancellations || []).map((c, i) => ({
+      key: `c-${i}`,
+      label: `✕ ${c.flightNumber || c.airline || 'Flight'} ${c.originCity || c.origin} → ${c.destinationCity || c.destination}`,
+      detail: `CANCELLED${c.scheduledTime ? ` · ${c.scheduledTime}` : ''}`,
+      severity: 'critical',
+    })),
+  ];
+
+  if (allItems.length === 0) return null;
+
+  const items = allItems.length < 6
+    ? [...allItems, ...allItems, ...allItems]
+    : [...allItems, ...allItems];
+
+  return (
+    <div className="ticker-strip ticker-strip-cancellations">
+      <div className="ticker-label ticker-label-cancellations">
+        <span className="ticker-label-dot" />
+        ⚡ DISRUPTIONS
+      </div>
+      <div className="ticker-track-wrap">
+        <div className="ticker-track ticker-track-cancellations">
+          {items.map((item, i) => (
+            <span
+              key={`${item.key}-${i}`}
+              className={`ticker-item ticker-item-severity-${item.severity || 'high'}`}
+            >
+              <span className="ticker-item-status">
+                <strong>{item.label}</strong>
+                <span style={{ opacity: 0.7 }}>· {item.detail}</span>
+              </span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page Component ────────────────────────────────
 export default function Home() {
   const [data, setData] = useState(null);
@@ -98,7 +201,12 @@ export default function Home() {
   const emptyLegs = data?.emptyLegs || [];
   const rescueDeals = data?.rescueDeals || [];
   const disruptions = data?.disruptions || [];
+  const cancellations = data?.cancellations || [];
   const meta = data?.meta || {};
+
+  // Compute how many ticker strips are visible
+  const tickerCount = (emptyLegs.length > 0 ? 1 : 0) + ((disruptions.length > 0 || cancellations.length > 0) ? 1 : 0);
+  const tickerOffset = tickerCount * 34; // 34px per ticker
 
   // Filter flights based on search
   const filteredLegs = emptyLegs.filter(f => {
@@ -109,8 +217,17 @@ export default function Home() {
 
   return (
     <>
+      {/* ═══ TICKER: VILLIERS EMPTY LEGS ═══ */}
+      <EmptyLegsTicker flights={emptyLegs} />
+
+      {/* ═══ TICKER: CANCELLATIONS / DISRUPTIONS ═══ */}
+      <CancellationsTicker
+        disruptions={disruptions}
+        cancellations={cancellations}
+      />
+
       {/* ═══ NAVIGATION ═══ */}
-      <nav className="nav">
+      <nav className="nav" style={{ top: `${tickerOffset}px` }}>
         <a href="/" className="nav-logo">
           <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
             <circle cx="18" cy="18" r="17" stroke="#D4A843" strokeWidth="2"/>
@@ -121,18 +238,18 @@ export default function Home() {
         <ul className="nav-links">
           <li><a href="#deals">Deals</a></li>
           <li><a href="#social">Social Booking</a></li>
-          <li><a href="#about">About</a></li>
+          <li><a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer">Book a Flight</a></li>
         </ul>
         <div className="nav-actions">
-          <a href="#" className="btn-outline">Log In</a>
-          <a href="#" className="btn-primary">
-            <UsersIcon /> Sign Up
+          <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="btn-outline">Log In</a>
+          <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="btn-primary">
+            <UsersIcon /> Sign Up Free
           </a>
         </div>
       </nav>
 
       {/* ═══ HERO ═══ */}
-      <section className="hero">
+      <section className="hero" style={{ paddingTop: `${tickerOffset + 80 + 32}px` }}>
         <div className="hero-bg" />
         <div className="hero-content">
           <div className="hero-left">
@@ -195,7 +312,7 @@ export default function Home() {
               </div>
             </div>
             <button className="search-btn" onClick={() => {
-              document.getElementById('deals')?.scrollIntoView({ behavior: 'smooth' });
+              window.open(AFFILIATE_URL, '_blank', 'noopener,noreferrer');
             }}>
               ✈ Search Luxury Deals
             </button>
@@ -246,7 +363,7 @@ export default function Home() {
                       )}
                       <span className="deal-price-label">TOTAL PRICE</span>
                     </div>
-                    <a href="#" className="deal-book-btn">Rescue Me</a>
+                    <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="deal-book-btn">Rescue Me ✈</a>
                   </div>
                 </div>
               </div>
@@ -284,7 +401,7 @@ export default function Home() {
             </h2>
             <p>Unmatched prices on one-way flights. Act fast — these deals typically book within minutes.</p>
           </div>
-          <a href="#" className="view-all">
+          <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="view-all">
             View All Deals <ArrowRightIcon />
           </a>
         </div>
@@ -348,7 +465,7 @@ export default function Home() {
                         )}
                         <span className="deal-price-label">TOTAL PRICE</span>
                       </div>
-                      <a href="#" className="deal-book-btn">Book Now</a>
+                      <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="deal-book-btn">Book Now ✈</a>
                     </div>
                   </div>
                 </div>
@@ -391,7 +508,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <button className="btn-red">Create a New Group</button>
+            <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="btn-red">Create a New Group</a>
           </div>
 
           <div className="social-right">
@@ -401,9 +518,9 @@ export default function Home() {
             </div>
 
             {[
-              { from: 'London', to: 'Nice', seeking: 4, slots: '2/6', date: 'JUN 14', price: 417 },
-              { from: 'New York', to: 'Miami', seeking: 5, slots: '3/8', date: 'JUN 19', price: 525 },
-              { from: 'Milan', to: 'Ibiza', seeking: 3, slots: '1/4', date: 'JUN 24', price: 550 },
+              { from: 'London', to: 'Nice', seeking: 4, slots: '2/6', date: 'MAY 22', price: 417 },
+              { from: 'New York', to: 'Miami', seeking: 5, slots: '3/8', date: 'MAY 25', price: 525 },
+              { from: 'Milan', to: 'Ibiza', seeking: 3, slots: '1/4', date: 'MAY 29', price: 550 },
             ].map((group, i) => (
               <div key={i} className="group-card">
                 <div className="group-card-top">
@@ -422,7 +539,7 @@ export default function Home() {
                     <span className="group-info">👥 {group.slots} SLOTS</span>
                     <span className="group-info">⚡ {group.date}</span>
                   </div>
-                  <a href="#" className="group-join-btn">Join Group</a>
+                  <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="group-join-btn">Join Group</a>
                 </div>
               </div>
             ))}
@@ -455,8 +572,8 @@ export default function Home() {
           </h2>
           <p>Join JetShare today and get instant access to our private network of empty leg deals and social booking groups.</p>
           <div className="cta-buttons">
-            <button className="btn-red">Get Started Free</button>
-            <button className="btn-gold">Browse All Deals</button>
+            <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="btn-red">Get Started Free</a>
+            <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="btn-gold">Browse All Deals</a>
           </div>
         </div>
       </section>

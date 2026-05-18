@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import fallbackFlights from '../../../lib/fallback-flights.json';
 
+const EMPTY_LEGS_CACHE = '/tmp/empty-legs.json';
+const CANCELLATIONS_CACHE = '/tmp/cancellations.json';
+
 function getMatcher() {
   return require('../../../lib/matcher').matchDeals;
 }
@@ -15,8 +18,8 @@ export async function GET(request) {
     // Load cached empty legs
     let emptyLegs = null;
     try {
-      if (fs.existsSync('/tmp/empty-legs.json')) {
-        emptyLegs = JSON.parse(fs.readFileSync('/tmp/empty-legs.json', 'utf8'));
+      if (fs.existsSync(EMPTY_LEGS_CACHE)) {
+        emptyLegs = JSON.parse(fs.readFileSync(EMPTY_LEGS_CACHE, 'utf8'));
         // Check freshness (24h)
         const age = Date.now() - new Date(emptyLegs.scrapedAt).getTime();
         if (age > 24 * 60 * 60 * 1000) emptyLegs = null;
@@ -31,8 +34,8 @@ export async function GET(request) {
     // Load cached cancellations
     let cancellations = null;
     try {
-      if (fs.existsSync('/tmp/cancellations.json')) {
-        cancellations = JSON.parse(fs.readFileSync('/tmp/cancellations.json', 'utf8'));
+      if (fs.existsSync(CANCELLATIONS_CACHE)) {
+        cancellations = JSON.parse(fs.readFileSync(CANCELLATIONS_CACHE, 'utf8'));
         const age = Date.now() - new Date(cancellations.scrapedAt).getTime();
         if (age > 12 * 60 * 60 * 1000) cancellations = null;
       }

@@ -54,11 +54,206 @@ body {
   font-family: 'Space Mono', monospace;
 }
 
+/* ─── TICKERS ──────────────────────────────────────── */
+
+.ticker-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  height: 34px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ticker-strip-empty-legs {
+  background: linear-gradient(90deg, #1a1200, #2a1e00, #1a1200);
+  border-bottom: 1px solid rgba(212, 168, 67, 0.4);
+  color: var(--gold-300);
+}
+
+.ticker-strip-cancellations {
+  top: 34px;
+  background: linear-gradient(90deg, #1a0000, #2a0000, #1a0000);
+  border-bottom: 1px solid rgba(197, 48, 48, 0.45);
+  color: #FCA5A5;
+}
+
+.ticker-label {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.9rem;
+  height: 100%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 2;
+}
+
+.ticker-label-empty-legs {
+  background: var(--gold-400);
+  color: var(--navy-900);
+}
+
+.ticker-label-cancellations {
+  background: #C53030;
+  color: #fff;
+}
+
+.ticker-label-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+.ticker-label-empty-legs .ticker-label-dot {
+  background: var(--navy-900);
+}
+
+.ticker-label-cancellations .ticker-label-dot {
+  background: #fff;
+}
+
+.ticker-track-wrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-track-wrap::before,
+.ticker-track-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.ticker-track-wrap::before {
+  left: 0;
+}
+
+.ticker-track-wrap::after {
+  right: 0;
+}
+
+.ticker-strip-empty-legs .ticker-track-wrap::before {
+  background: linear-gradient(to right, #1a1200, transparent);
+}
+.ticker-strip-empty-legs .ticker-track-wrap::after {
+  background: linear-gradient(to left, #1a1200, transparent);
+}
+
+.ticker-strip-cancellations .ticker-track-wrap::before {
+  background: linear-gradient(to right, #1a0000, transparent);
+}
+.ticker-strip-cancellations .ticker-track-wrap::after {
+  background: linear-gradient(to left, #1a0000, transparent);
+}
+
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  animation: ticker-scroll 40s linear infinite;
+  will-change: transform;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+.ticker-track-cancellations {
+  animation-duration: 35s;
+}
+
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0 1.2rem;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ticker-item:hover {
+  opacity: 0.75;
+}
+
+.ticker-item-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ticker-item-from,
+.ticker-item-to {
+  font-weight: 800;
+}
+
+.ticker-item-arrow {
+  opacity: 0.5;
+  font-size: 0.65rem;
+}
+
+.ticker-item-price {
+  opacity: 0.9;
+}
+
+.ticker-item-empty-legs .ticker-item-price {
+  color: var(--gold-400);
+}
+
+.ticker-item-separator {
+  padding: 0 0.5rem;
+  opacity: 0.25;
+}
+
+.ticker-item-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ticker-item-severity-critical {
+  color: #FC8181;
+}
+
+.ticker-item-severity-high {
+  color: #FCA5A5;
+}
+
+.ticker-item-severity-medium {
+  color: #FEB2B2;
+}
+
 /* ─── NAVIGATION ────────────────────────────────────── */
 
 .nav {
   position: fixed;
-  top: 0;
+  top: 68px; /* 34px × 2 tickers */
   left: 0;
   right: 0;
   z-index: 1000;
@@ -212,7 +407,7 @@ body {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 7rem 2rem 4rem;
+  padding: 9.5rem 2rem 4rem; /* extra top padding for 2 tickers + nav */
   overflow: hidden;
 }
 
