@@ -514,42 +514,28 @@ export default function Home() {
 
           <div className="social-right">
             <div className="trending-header">
-              <h3 className="font-display">Trending Groups</h3>
-              <span className="trending-live"><span className="dot" /> LIVE UPDATES</span>
+              <h3 className="font-display">Start a Group</h3>
             </div>
 
-            {[
-              { from: 'London', to: 'Nice', seeking: 4, slots: '2/6', date: 'MAY 22', price: 417 },
-              { from: 'New York', to: 'Miami', seeking: 5, slots: '3/8', date: 'MAY 25', price: 525 },
-              { from: 'Milan', to: 'Ibiza', seeking: 3, slots: '1/4', date: 'MAY 29', price: 550 },
-            ].map((group, i) => (
-              <div key={i} className="group-card">
-                <div className="group-card-top">
-                  <div className="group-route">
-                    <div className="group-avatar">👤</div>
-                    <span className="group-route-text">{group.from} → {group.to}</span>
-                  </div>
-                  <div className="group-price">
-                    <div className="group-price-amount">${group.price}</div>
-                    <div className="group-price-label">PER PERSON</div>
-                  </div>
-                </div>
-                <div className="group-card-bottom">
-                  <div className="group-meta">
-                    <span className="group-seeking">SEEKING {group.seeking}</span>
-                    <span className="group-info">👥 {group.slots} SLOTS</span>
-                    <span className="group-info">⚡ {group.date}</span>
-                  </div>
-                  <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="group-join-btn">Join Group</a>
-                </div>
-              </div>
-            ))}
+            <div className="group-card" style={{ textAlign: 'center', padding: '2rem 1.5rem' }}>
+              <p style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>Be the first on your route.</p>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+                Post your route on Villiers and invite others to split the cost of an empty leg with you.
+              </p>
+              <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="group-join-btn" style={{ padding: '0.7rem 1.5rem', fontSize: '0.9rem' }}>
+                Find a Flight to Share ✈
+              </a>
+            </div>
 
             <div className="group-card" style={{ textAlign: 'center', padding: '1.5rem' }}>
-              <p style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.3rem' }}>Can&apos;t find your route?</p>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Start a request and we&apos;ll notify you when others want to share the cost.</p>
+              <p style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.3rem' }}>Already flying private?</p>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>List your empty seats and split the charter cost with verified flyers.</p>
+              <a href={AFFILIATE_URL} target="_blank" rel="noopener noreferrer" className="group-join-btn">
+                List My Seats
+              </a>
             </div>
           </div>
+
         </div>
       </section>
 
