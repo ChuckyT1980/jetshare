@@ -8,7 +8,16 @@ function getMatcher() {
   return require('../../../lib/matcher').matchDeals;
 }
 
+function getScraper() {
+  return require('../../../lib/scraper-villiers').scrapeVilliers;
+}
+
+function getCancellationScraper() {
+  return require('../../../lib/scraper-cancellations').scrapeCancellations;
+}
+
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 export async function GET(request) {
   try {
@@ -19,15 +28,24 @@ export async function GET(request) {
     try {
       if (fs.existsSync(EMPTY_LEGS_CACHE)) {
         emptyLegs = JSON.parse(fs.readFileSync(EMPTY_LEGS_CACHE, 'utf8'));
-        // Check freshness (24h)
         const age = Date.now() - new Date(emptyLegs.scrapedAt).getTime();
         if (age > 24 * 60 * 60 * 1000) emptyLegs = null;
       }
     } catch (e) { emptyLegs = null; }
 
-    // No real data yet — return empty
+    // No cache — run scraper on the spot (self-bootstraps on first deploy)
     if (!emptyLegs || !emptyLegs.flights?.length) {
-      emptyLegs = { flights: [], source: 'none' };
+      console.log('[Deals] No cached flights — running live scrape now...');
+      try {
+        const scrapeVilliers = getScraper();
+        const scraped = await scrapeVilliers();
+        if (scraped?.flights?.length > 0) {
+          fs.writeFileSync(EMPTY_LEGS_CACHE, JSON.stringify(scraped, null, 2));
+          emptyLegs = scraped;
+        }
+      } catch (e) {
+        console.error('[Deals] Live scrape failed:', e.message);
+      }
     }
 
     // Load cached cancellations
@@ -40,20 +58,34 @@ export async function GET(request) {
       }
     } catch (e) { cancellations = null; }
 
-    // Run matcher
-    const rescueDeals = cancellations ? matchDeals(emptyLegs, cancellations) : [];
+    // No cancellation cache — run that scraper too
+    if (!cancellations) {
+      console.log('[Deals] No cached cancellations — running live scrape now...');
+      try {
+        const scrapeCancellations = getCancellationScraper();
+        const scraped = await scrapeCancellations();
+        fs.writeFileSync(CANCELLATIONS_CACHE, JSON.stringify(scraped, null, 2));
+        cancellations = scraped;
+      } catch (e) {
+        console.error('[Deals] Cancellation scrape failed:', e.message);
+      }
+    }
+
+    const flights = emptyLegs?.flights || [];
+    const rescueDeals = cancellations ? matchDeals(emptyLegs || { flights }, cancellations) : [];
 
     return NextResponse.json({
-      emptyLegs: emptyLegs.flights || [],
+      emptyLegs: flights,
       rescueDeals,
       disruptions: cancellations?.disruptions || [],
       affectedAirports: cancellations?.affectedAirports || [],
+      cancellations: cancellations?.cancellations || [],
       meta: {
-        emptyLegSource: emptyLegs.source || 'unknown',
-        emptyLegCount: (emptyLegs.flights || []).length,
+        emptyLegSource: emptyLegs?.source || 'none',
+        emptyLegCount: flights.length,
         rescueDealCount: rescueDeals.length,
         disruptionCount: (cancellations?.disruptions || []).length,
-        lastFlightScrape: emptyLegs.scrapedAt || null,
+        lastFlightScrape: emptyLegs?.scrapedAt || null,
         lastCancellationScrape: cancellations?.scrapedAt || null,
       },
     });
@@ -64,6 +96,7 @@ export async function GET(request) {
       rescueDeals: [],
       disruptions: [],
       affectedAirports: [],
+      cancellations: [],
       meta: { error: error.message },
     });
   }
