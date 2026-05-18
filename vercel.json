@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/scrape-flights",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/scrape-cancellations",
+      "schedule": "30 */6 * * *"
+    }
+  ]
+}

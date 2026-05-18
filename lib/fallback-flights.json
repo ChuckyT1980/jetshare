@@ -1,0 +1,17 @@
+{
+  "flights": [
+    { "id": "fb-1", "from": "TEB", "to": "MIA", "fromCity": "Teterboro", "toCity": "Miami", "date": "June 14, 2026", "aircraft": "Phenom 300", "category": "Midsize", "price": 2800, "seats": 6, "source": "fallback" },
+    { "id": "fb-2", "from": "LHR", "to": "NCE", "fromCity": "London", "toCity": "Nice", "date": "June 14, 2026", "aircraft": "Citation XLS", "category": "Midsize", "price": 3200, "seats": 8, "source": "fallback" },
+    { "id": "fb-3", "from": "VNY", "to": "LAS", "fromCity": "Van Nuys", "toCity": "Las Vegas", "date": "June 16, 2026", "aircraft": "Phenom 100", "category": "Light", "price": 1800, "seats": 4, "source": "fallback" },
+    { "id": "fb-4", "from": "CDG", "to": "GVA", "fromCity": "Paris", "toCity": "Geneva", "date": "June 17, 2026", "aircraft": "Citation Mustang", "category": "Light", "price": 2100, "seats": 4, "source": "fallback" },
+    { "id": "fb-5", "from": "JFK", "to": "MIA", "fromCity": "New York JFK", "toCity": "Miami", "date": "June 19, 2026", "aircraft": "Challenger 350", "category": "Super Mid", "price": 4200, "seats": 8, "source": "fallback" },
+    { "id": "fb-6", "from": "DXB", "to": "RUH", "fromCity": "Dubai", "toCity": "Riyadh", "date": "June 21, 2026", "aircraft": "Global 6000", "category": "Heavy", "price": 5500, "seats": 12, "source": "fallback" },
+    { "id": "fb-7", "from": "VNY", "to": "SFO", "fromCity": "Van Nuys", "toCity": "San Francisco", "date": "June 22, 2026", "aircraft": "Phenom 300", "category": "Midsize", "price": 2400, "seats": 6, "source": "fallback" },
+    { "id": "fb-8", "from": "MXP", "to": "IBZ", "fromCity": "Milan", "toCity": "Ibiza", "date": "June 24, 2026", "aircraft": "Citation XLS", "category": "Midsize", "price": 3000, "seats": 8, "source": "fallback" },
+    { "id": "fb-9", "from": "ORD", "to": "BNA", "fromCity": "Chicago", "toCity": "Nashville", "date": "June 25, 2026", "aircraft": "Learjet 75", "category": "Midsize", "price": 2200, "seats": 6, "source": "fallback" },
+    { "id": "fb-10", "from": "FLL", "to": "NAS", "fromCity": "Fort Lauderdale", "toCity": "Nassau", "date": "June 27, 2026", "aircraft": "King Air 350", "category": "Turboprop", "price": 1600, "seats": 6, "source": "fallback" }
+  ],
+  "scrapedAt": "2026-05-17T12:00:00.000Z",
+  "totalFound": 10,
+  "source": "fallback"
+}

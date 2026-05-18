@@ -1,0 +1,7 @@
+node_modules/
+.next/
+.vercel/
+*.tgz
+*.tar.gz
+.env
+.env.local
