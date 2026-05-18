@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
-import fallbackFlights from '../../../lib/fallback-flights.json';
 
 const EMPTY_LEGS_CACHE = '/tmp/empty-legs.json';
 const CANCELLATIONS_CACHE = '/tmp/cancellations.json';
@@ -26,9 +25,9 @@ export async function GET(request) {
       }
     } catch (e) { emptyLegs = null; }
 
-    // Fallback if no cached data
+    // No real data yet — return empty
     if (!emptyLegs || !emptyLegs.flights?.length) {
-      emptyLegs = fallbackFlights;
+      emptyLegs = { flights: [], source: 'none' };
     }
 
     // Load cached cancellations
@@ -61,7 +60,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('[API] Deals error:', error);
     return NextResponse.json({
-      emptyLegs: fallbackFlights.flights || [],
+      emptyLegs: [],
       rescueDeals: [],
       disruptions: [],
       affectedAirports: [],
