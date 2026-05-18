@@ -475,11 +475,7 @@ export default function Home() {
           </div>
         )}
 
-        {!loading && emptyLegs.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-            <p>Scraper hasn't run yet. Hit <code>/api/scrape-flights</code> to trigger manually, or wait for the cron job.</p>
-          </div>
-        )}
+
       </section>
 
       {/* ═══ SOCIAL BOOKING ═══ */}
