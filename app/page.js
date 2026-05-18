@@ -85,13 +85,14 @@ function getCityImage(city) {
 
 // ─── Empty Legs Ticker ──────────────────────────────────
 function EmptyLegsTicker({ flights }) {
+  // ONLY show real scraped data — never fallback placeholders
+  const realFlights = (flights || []).filter(f => f.source === 'villiers' || f.source === 'villiers-api');
 
-  // Need at least a few items; duplicate until we have 12+ for seamless loop
-  if (!flights || flights.length === 0) return null;
+  if (realFlights.length === 0) return null;
 
-  const items = flights.length < 6
-    ? [...flights, ...flights, ...flights]
-    : [...flights, ...flights]; // duplicate for seamless infinite scroll
+  const items = realFlights.length < 6
+    ? [...realFlights, ...realFlights, ...realFlights]
+    : [...realFlights, ...realFlights]; // duplicate for seamless infinite scroll
 
   return (
     <div className="ticker-strip ticker-strip-empty-legs">
