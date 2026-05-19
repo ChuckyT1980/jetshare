@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
+import realFlights from '../../../lib/real-flights.json';
 
 const EMPTY_LEGS_CACHE = '/tmp/empty-legs.json';
 const CANCELLATIONS_CACHE = '/tmp/cancellations.json';
@@ -33,9 +34,9 @@ export async function GET(request) {
       }
     } catch (e) { emptyLegs = null; }
 
-    // No cache — run scraper on the spot (self-bootstraps on first deploy)
+    // No live cache — try scraper, fall back to real static data
     if (!emptyLegs || !emptyLegs.flights?.length) {
-      console.log('[Deals] No cached flights — running live scrape now...');
+      console.log('[Deals] No cached flights — running live scrape...');
       try {
         const scrapeVilliers = getScraper();
         const scraped = await scrapeVilliers();
@@ -46,6 +47,11 @@ export async function GET(request) {
       } catch (e) {
         console.error('[Deals] Live scrape failed:', e.message);
       }
+    }
+
+    // Final fallback — use manually verified real Villiers data
+    if (!emptyLegs || !emptyLegs.flights?.length) {
+      emptyLegs = realFlights;
     }
 
     // Load cached cancellations
