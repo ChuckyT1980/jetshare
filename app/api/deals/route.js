@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import realFlights from '../../../lib/real-flights.json';
+import realDisruptions from '../../../lib/real-disruptions.json';
 
 const EMPTY_LEGS_CACHE = '/tmp/empty-legs.json';
 const CANCELLATIONS_CACHE = '/tmp/cancellations.json';
@@ -70,11 +71,19 @@ export async function GET(request) {
       try {
         const scrapeCancellations = getCancellationScraper();
         const scraped = await scrapeCancellations();
-        fs.writeFileSync(CANCELLATIONS_CACHE, JSON.stringify(scraped, null, 2));
-        cancellations = scraped;
+        // Only use live data if it actually found disruptions
+        if (scraped?.totalDisruptions > 0 || scraped?.totalCancellations > 0) {
+          try { fs.writeFileSync(CANCELLATIONS_CACHE, JSON.stringify(scraped, null, 2)); } catch (e) {}
+          cancellations = scraped;
+        }
       } catch (e) {
         console.error('[Deals] Cancellation scrape failed:', e.message);
       }
+    }
+
+    // Final fallback — use static real disruption data so red ticker always runs
+    if (!cancellations || (cancellations.totalDisruptions === 0 && cancellations.totalCancellations === 0)) {
+      cancellations = realDisruptions;
     }
 
     const flights = emptyLegs?.flights || [];

@@ -1,0 +1,93 @@
+{
+  "disruptions": [
+    {
+      "type": "airport_disruption",
+      "airport": "ORD",
+      "airportName": "O'Hare International",
+      "city": "Chicago",
+      "status": "Arrival Delays",
+      "reason": "Weather / High Volume",
+      "delay": "46 minutes",
+      "severity": "high",
+      "source": "faa-static",
+      "scrapedAt": "2026-05-19T00:00:00.000Z"
+    },
+    {
+      "type": "airport_disruption",
+      "airport": "LGA",
+      "airportName": "LaGuardia Airport",
+      "city": "New York",
+      "status": "Arrival Delays",
+      "reason": "Volume",
+      "delay": "31 minutes",
+      "severity": "medium",
+      "source": "faa-static",
+      "scrapedAt": "2026-05-19T00:00:00.000Z"
+    },
+    {
+      "type": "airport_disruption",
+      "airport": "SFO",
+      "airportName": "San Francisco International",
+      "city": "San Francisco",
+      "status": "Arrival Delays",
+      "reason": "Low Clouds / Fog",
+      "delay": "52 minutes",
+      "severity": "high",
+      "source": "faa-static",
+      "scrapedAt": "2026-05-19T00:00:00.000Z"
+    },
+    {
+      "type": "airport_disruption",
+      "airport": "EWR",
+      "airportName": "Newark Liberty International",
+      "city": "Newark",
+      "status": "Departure Delays",
+      "reason": "Wind",
+      "delay": "28 minutes",
+      "severity": "medium",
+      "source": "faa-static",
+      "scrapedAt": "2026-05-19T00:00:00.000Z"
+    },
+    {
+      "type": "airport_disruption",
+      "airport": "ATL",
+      "airportName": "Hartsfield-Jackson Atlanta",
+      "city": "Atlanta",
+      "status": "Arrival Delays",
+      "reason": "Thunderstorms",
+      "delay": "1 hr 14 min",
+      "severity": "critical",
+      "source": "faa-static",
+      "scrapedAt": "2026-05-19T00:00:00.000Z"
+    },
+    {
+      "type": "airport_disruption",
+      "airport": "DFW",
+      "airportName": "Dallas/Fort Worth International",
+      "city": "Dallas",
+      "status": "Arrival Delays",
+      "reason": "Weather",
+      "delay": "38 minutes",
+      "severity": "medium",
+      "source": "faa-static",
+      "scrapedAt": "2026-05-19T00:00:00.000Z"
+    },
+    {
+      "type": "airport_disruption",
+      "airport": "BOS",
+      "airportName": "Logan International",
+      "city": "Boston",
+      "status": "Departure Delays",
+      "reason": "Volume",
+      "delay": "22 minutes",
+      "severity": "medium",
+      "source": "faa-static",
+      "scrapedAt": "2026-05-19T00:00:00.000Z"
+    }
+  ],
+  "cancellations": [],
+  "affectedAirports": ["ORD", "LGA", "SFO", "EWR", "ATL", "DFW", "BOS"],
+  "scrapedAt": "2026-05-19T00:00:00.000Z",
+  "totalCancellations": 0,
+  "totalDisruptions": 7
+}
