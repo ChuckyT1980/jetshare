@@ -171,7 +171,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0;
-  animation: ticker-scroll 40s linear infinite;
+  animation: ticker-scroll 90s linear infinite;
   will-change: transform;
 }
 
@@ -180,7 +180,7 @@ body {
 }
 
 .ticker-track-cancellations {
-  animation-duration: 35s;
+  animation-duration: 80s;
 }
 
 @keyframes ticker-scroll {
