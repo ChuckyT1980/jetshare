@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
-import realFlights from '../../../lib/real-flights.json';
-import realDisruptions from '../../../lib/real-disruptions.json';
+import path from 'path';
+
+// Dynamically read JSON so updates don't require server restarts
+const getRealFlights = () => JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/real-flights.json'), 'utf8'));
+const getRealDisruptions = () => JSON.parse(fs.readFileSync(path.join(process.cwd(), 'lib/real-disruptions.json'), 'utf8'));
 
 const EMPTY_LEGS_CACHE = '/tmp/empty-legs.json';
 const CANCELLATIONS_CACHE = '/tmp/cancellations.json';
@@ -50,9 +53,13 @@ export async function GET(request) {
       }
     }
 
-    // Final fallback — use manually verified real Villiers data
+    // Always include our manually verified real Villiers data (which includes the uploaded images)
     if (!emptyLegs || !emptyLegs.flights?.length) {
-      emptyLegs = realFlights;
+      emptyLegs = getRealFlights();
+    } else {
+      // Prepend our image-based flights so they appear first!
+      emptyLegs.flights = [...getRealFlights().flights, ...emptyLegs.flights];
+      emptyLegs.totalFound = emptyLegs.flights.length;
     }
 
     // Load cached cancellations
@@ -83,7 +90,7 @@ export async function GET(request) {
 
     // Final fallback — use static real disruption data so red ticker always runs
     if (!cancellations || (cancellations.totalDisruptions === 0 && cancellations.totalCancellations === 0)) {
-      cancellations = realDisruptions;
+      cancellations = getRealDisruptions();
     }
 
     const flights = emptyLegs?.flights || [];

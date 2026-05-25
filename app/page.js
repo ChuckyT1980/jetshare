@@ -218,7 +218,7 @@ export default function Home() {
   const [searchTo, setSearchTo] = useState('');
 
   useEffect(() => {
-    fetch('/api/deals')
+    fetch(`/api/deals?t=${Date.now()}`)
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
